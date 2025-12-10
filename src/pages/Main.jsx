@@ -2,6 +2,8 @@ import "../App.css";
 import ProductCarousel from "../components/Product/ProductCarousel";
 import SectionTitle from "../components/Product/SectionTitle";
 import Container from "../components/Layout/Container/Container";
+import HeroCarousel from "../components/HeroCarousel";
+// import HeroNike from "../components/HeroNike";
 
 import { useEffect, useState } from "react";
 import { useSearch } from "../context/SearchContext";
@@ -35,6 +37,8 @@ function Main() {
   return (
     <div className="bg-white min-h-screen w-full overflow-x-hidden flex flex-col">
       <main className="flex-1 w-full text-gray-800">
+        <HeroCarousel />
+        {/* <HeroNike/> */}
         <Container>
 
           {/* ============================= */}

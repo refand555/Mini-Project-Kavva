@@ -76,7 +76,7 @@ export default function HeaderIcons({ setSidebar }) {
         className="relative"
         onClick={() => setSidebar("cart")}
       >
-        <ShoppingCart strokeWidth={1.5} size={24} className="text-black" />
+        <ShoppingCart strokeWidth={1.5} size={24} className="text-white" />
         {cartCount > 0 && (
           <span className="absolute -top-2 -right-2 bg-red-500 text-white text-[10px] px-1.5 py-[1px] rounded-full font-semibold">
             {cartCount}
@@ -89,7 +89,7 @@ export default function HeaderIcons({ setSidebar }) {
         className="relative"
         onClick={() => setSidebar("wishlist")}
       >
-        <Heart strokeWidth={1.5} size={24} className="text-black" />
+        <Heart strokeWidth={1.5} size={24} className="text-white" />
         {wishlistCount > 0 && (
           <span className="absolute -top-2 -right-2 bg-blue-500 text-white text-[10px] px-1.5 py-[1px] rounded-full font-semibold">
             {wishlistCount}
@@ -100,7 +100,7 @@ export default function HeaderIcons({ setSidebar }) {
       {/* USER ICON */}
       {user ? (
         <button onClick={() => navigate("/dashboard")}>
-          <User size={24} className="text-black" />
+          <User size={24} className="text-white" />
         </button>
       ) : (
         <button onClick={() => navigate("/login")}>
