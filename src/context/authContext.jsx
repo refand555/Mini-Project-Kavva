@@ -12,27 +12,36 @@ export function AuthProvider({ children }) {
   // -----------------------
   // FETCH USER SESSION
   // -----------------------
-  useEffect(() => {
-    const getSession = async () => {
-      const { data, error } = await supabase.auth.getSession();
-      if (!error && data?.session) {
-        setUser(data.session.user);
-      }
-      setLoading(false);
-    };
+useEffect(() => {
+  const getSession = async () => {
+    const { data, error } = await supabase.auth.getSession();
+    if (!error && data?.session) {
+      setUser(data.session.user);
+    }
+    setLoading(false);
+  };
 
-    getSession();
+  getSession();
 
-    const { data: authListener } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
-        setUser(session?.user || null);
-      }
-    );
+ const { data: authListener } = supabase.auth.onAuthStateChange(
+  async (event, session) => {
+    setUser(session?.user || null);
 
-    return () => {
-      authListener.subscription.unsubscribe();
-    };
-  }, []);
+    if (event === "PASSWORD_RECOVERY") {
+      // simpan flag recovery
+      localStorage.setItem("reset-mode", "active");
+
+      // redirect HARUS dilakukan DI SINI
+      window.location.replace("/reset-password");
+    }
+  }
+);
+
+return () => {
+  authListener.subscription.unsubscribe();
+};
+}, []);
+
 
   // -----------------------
   // FETCH PROFILE

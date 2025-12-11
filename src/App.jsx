@@ -1,4 +1,5 @@
 import { Routes, Route, Navigate, useLocation } from "react-router-dom";
+import { useEffect } from "react";
 
 import Header from "./components/Layout/Header/Header";
 import Footer from "./components/Layout/Footer/Footer";
@@ -10,6 +11,9 @@ import DashboardPage from "./pages/User/Dashboard";
 import Cart from "./pages/Cart";
 import Wishlist from "./pages/Wishlist";
 import CategoryPage from "./pages/Category/CategoryPage";
+import ResetPassword from "./pages/ResetPassword";
+import ForgotPassword from "./pages/ForgotPassword";
+import AuthCallback from "./pages/AuthCallback";
 
 import ProtectedRoute from "./route/ProtectedRoute";
 import PublicRoute from "./route/PublicRoute";
@@ -36,34 +40,46 @@ export default function App() {
   const location = useLocation();
   const { profile, loading, profileLoading } = useAuth();
 
+  // HAPUS REDIRECT PAKSA RESET-PASSWORD
+  // (INI YANG MERUSAK RECOVERY SESSION SEBELUMNYA)
+
   // GLOBAL LOADING (supaya tidak flicker)
   if (loading || profileLoading) {
     return <div className="p-6">Loading...</div>;
   }
 
+  // IZINKAN /reset-password DAN /auth/callback BEBAS DARI GUARD
+  const isRecoveryPath =
+    location.pathname.startsWith("/reset-password") ||
+    location.pathname.startsWith("/auth/callback");
+
   // GLOBAL GUARD UNTUK ADMIN:
-  // Admin tidak boleh masuk halaman user/public
-  if (profile?.role === "admin") {
+  // Admin tidak boleh masuk halaman user/public, kecuali recovery path
+  if (!isRecoveryPath && profile?.role === "admin") {
     const allowedAdminPath = location.pathname.startsWith("/admin");
     if (!allowedAdminPath) {
       return <Navigate to="/admin" replace />;
     }
   }
 
+  // HIDE HEADER & FOOTER
   const hideLayout =
     location.pathname.startsWith("/login") ||
     location.pathname.startsWith("/register") ||
+    location.pathname.startsWith("/reset-password") || // recovery bebas layout
+    location.pathname.startsWith("/auth/callback") || // callback bebas layout
     location.pathname.startsWith("/cart") ||
     location.pathname.startsWith("/wishlist") ||
     location.pathname.startsWith("/dashboard") ||
     location.pathname.startsWith("/orders") ||
     location.pathname.startsWith("/order") ||
     location.pathname.startsWith("/admin") ||
+    location.pathname.startsWith("/forgot-password") ||
     location.pathname.startsWith("/checkout");
 
   return (
     <>
-  {!hideLayout && location.pathname !== "/" && <Header />}
+      {!hideLayout && location.pathname !== "/" && <Header />}
 
       <Routes>
         {/* PUBLIC */}
@@ -72,6 +88,13 @@ export default function App() {
         {/* AUTH */}
         <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
         <Route path="/register" element={<PublicRoute><Register /></PublicRoute>} />
+        <Route path="/forgot-password" element={<PublicRoute><ForgotPassword /></PublicRoute>} />
+
+        {/* SUPABASE CALLBACK (WAJIB ADA) */}
+        <Route path="/auth/callback" element={<AuthCallback />} />
+
+        {/* RESET PASSWORD PAGE */}
+        <Route path="/reset-password" element={<PublicRoute><ResetPassword /></PublicRoute>} />
 
         {/* CATEGORY */}
         <Route path="/category/:main" element={<CategoryPage />} />

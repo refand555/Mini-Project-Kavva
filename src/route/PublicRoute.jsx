@@ -6,12 +6,17 @@ export default function PublicRoute({ children }) {
 
   if (loading || profileLoading) return <p className="p-6">Loading...</p>;
 
+  // Jika sedang recovery, biarkan user akses halaman /reset-password
+  if (localStorage.getItem("reset-mode") === "active") {
+    return children;
+  }
+
   if (user && profile?.role === "admin") {
     return <Navigate to="/admin" replace />;
   }
 
   if (user && profile?.role === "user") {
-    return <Navigate to="/dashboard" replace />;
+    return <Navigate to="/" replace />;
   }
 
   return children;

@@ -100,6 +100,12 @@ export default function Login() {
             </button>
           </div>
 
+          <p className="text-right text-sm mt-1">
+          <a href="/forgot-password" className="text-black underline">
+            Lupa password?
+          </a>
+        </p>
+
           <button
             type="submit"
             className="w-full bg-black text-white py-3 rounded-xl font-semibold hover:bg-black/90 transition"

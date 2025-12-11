@@ -41,6 +41,23 @@ export default function CheckoutPage() {
 
     fetchProfile();
   }, [user]);
+  
+  // ==========================================
+  // LOAD MIDTRANS SNAP (HANYA DI HALAMAN INI)
+  // ==========================================
+useEffect(() => {
+  const script = document.createElement("script");
+  script.src = "https://app.sandbox.midtrans.com/snap/snap.js";
+  script.setAttribute("data-client-key", "SB-Mid-client-KEY-KAMU");
+  script.async = true;
+
+  document.body.appendChild(script);
+
+  return () => {
+    document.body.removeChild(script);
+  };
+}, []);
+
 
   // ==========================================
   // FETCH CART USER + GAMBAR PRODUK
