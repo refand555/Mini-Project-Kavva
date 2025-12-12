@@ -3,15 +3,12 @@ import { useEffect, useState } from "react";
 import supabase from "../lib/supabaseClient";
 import { useAuth } from "../context/authContext";
 import { Trash2, ShoppingCart, ArrowLeft } from "lucide-react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate} from "react-router-dom";
 
 export default function Wishlist() {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const location = useLocation();
 
-  // PANAH HANYA MUNCUL DI LANDING PAGE /wishlist
-  const showBackButton = location.pathname === "/wishlist";
 
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -53,21 +50,6 @@ export default function Wishlist() {
   if (loading) {
     return (
       <div className="p-6 relative">
-        
-        {/* HEADER + CONDITIONAL ARROW */}
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-bold tracking-wide">Wishlist</h1>
-
-          {showBackButton && (
-            <button
-              className="absolute left-6 top-24 z-[999] p-2 bg-white rounded-full shadow-sm hover:scale-110 transition"
-              onClick={() => navigate(-1)}
-            >
-              <ArrowLeft size={20} className="text-black" />
-            </button>
-          )}
-        </div>
-
         <div>Memuat...</div>
       </div>
     );
@@ -75,21 +57,19 @@ export default function Wishlist() {
 
   return (
     <div className="p-6 relative">
-
-      {/* HEADER + CONDITIONAL ARROW */}
       <div className="flex items-center gap-3 mb-6">
 
   {/* PANAH DI KIRI SEBELAH TULISAN */}
-  {showBackButton && (
-    <button
-      onClick={() => navigate(-1)}
-      className="p-2 bg-white rounded-full shadow-sm hover:scale-110 transition">
-      <ArrowLeft size={20} className="text-black" />
-    </button>
-  )}
-
-  <h1 className="text-2xl font-bold tracking-wide">Wishlist</h1>
-</div>
+        <button
+          onClick={() => {
+            window.dispatchEvent(new Event("close-sidebar"));
+            navigate(-1);
+          }}
+          className="p-2 rounded-full bg-white shadow-sm hover:scale-110 transition">
+          <ArrowLeft size={20} className="text-black" />
+        </button>
+        <h1 className="text-2xl font-bold tracking-wide">Wishlist</h1>
+      </div>
 
 
       {items.length === 0 ? (
@@ -117,7 +97,11 @@ export default function Wishlist() {
                 className="flex items-center gap-4 p-5 border rounded-xl bg-white shadow-sm hover:shadow-md transition"
               >
                 {/* GAMBAR */}
-                <div className="w-[100px] h-[100px] flex items-center justify-center">
+                <div className="w-[100px] h-[100px] flex items-center justify-center"
+                onClick={() => {
+                window.dispatchEvent(new Event("close-sidebar"));
+                navigate(`/product/${item.product.id}`);
+              }}>
                   <img
                     src={displayImage}
                     alt={item.product.name}
@@ -139,7 +123,10 @@ export default function Wishlist() {
                 {/* BUTTONS */}
                 <div className="flex flex-col items-center gap-3">
                   <button
-                    onClick={() => navigate(`/product/${item.product.id}`)}
+                    onClick={() => {
+                    window.dispatchEvent(new Event("close-sidebar"));
+                    navigate(`/product/${item.product.id}`);
+                  }}
                     className="p-2 rounded-full bg-black text-white hover:bg-gray-800 transition">
                     <ShoppingCart size={18} />
                   </button>

@@ -41,6 +41,7 @@ import OrderDetail from "./pages/OrderDetail";
 export default function App() {
   const location = useLocation();
   const { profile, loading, profileLoading } = useAuth();
+  const { isOnHero } = useHero();
 
   // HAPUS REDIRECT PAKSA RESET-PASSWORD
   // (INI YANG MERUSAK RECOVERY SESSION SEBELUMNYA)
@@ -64,7 +65,6 @@ export default function App() {
     }
   }
 
-  const { isOnHero } = useHero();
 
   // HIDE HEADER & FOOTER
   const hideLayout =

@@ -258,11 +258,6 @@ useEffect(() => {
         <h1 className="text-3xl font-bold tracking-wide">Checkout</h1>
       </div>
 
-      {/* TITLE */}
-      <h1 className="text-3xl font-bold mt-4 mb-6 tracking-wide">
-        Checkout
-      </h1>
-
       {/* WRAPPER BESAR FULL WIDTH (DATA PEMESAN + RINGKASAN PESANAN) */}
       <div className="w-full bg-white px-4 py-4 rounded-xl shadow mb-6">
 

@@ -32,7 +32,7 @@ export default function CategoryPage() {
   }
 
   return (
-  <div className="p-6">
+  <div className="p-6 pt-28">
 
     {/* HEADER KATEGORI */}
     <div className="flex items-center gap-3 mb-4">
@@ -48,7 +48,7 @@ export default function CategoryPage() {
       </h1>
     </div>
 
-    {products.length === 0 && <p className="text-center">Tidak ada produk.</p>}
+    {products.length === 0 && <p className="text-center">Belum ada produk yang di tambahkan.</p>}
 
     <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
       {products.map((p) => (

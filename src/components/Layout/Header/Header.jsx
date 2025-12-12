@@ -49,6 +49,15 @@ export default function Header({ isOnHero }) {
       navigate(`/search?q=${query}`);
     }
   };
+  // CLOSE SIDEBAR DARI EVENT GLOBAL
+  useEffect(() => {
+    const closeSidebar = () => {
+      setSidebar(null);
+    };
+
+    window.addEventListener("close-sidebar", closeSidebar);
+    return () => window.removeEventListener("close-sidebar", closeSidebar);
+  }, []);
 
   // ================================================================
   // FINAL LIVE SEARCH — PAKAI LOGIKA ORDER SEPERTI DI PAGE LAIN

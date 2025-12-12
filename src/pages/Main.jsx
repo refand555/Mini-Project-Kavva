@@ -36,16 +36,27 @@ function Main() {
 
         <Container>
 
-          <SectionTitle title="Nike" link="/category/nike" />
-          <ProductCarousel brandSlug="nike" />
+        <SectionTitle
+          title="Nike"
+          link="/category/nike"
+          isFirst
+        />
+        <ProductCarousel brandSlug="nike" />
 
-          <SectionTitle title="Puma" link="/category/puma" />
-          <ProductCarousel brandSlug="puma" />
+        <SectionTitle
+          title="Puma"
+          link="/category/puma"
+        />
+        <ProductCarousel brandSlug="puma" />
 
-          <SectionTitle title="New Balance" link="/category/newbalance" />
-          <ProductCarousel brandSlug="newbalance" />
+        <SectionTitle
+          title="New Balance"
+          link="/category/newbalance"
+        />
+        <ProductCarousel brandSlug="newbalance" />
 
-        </Container>
+      </Container>
+
       </main>
     </div>
   );
