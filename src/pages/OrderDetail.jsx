@@ -238,7 +238,7 @@ useEffect(() => {
       </div>
 
       {/* UPLOAD BUKTI */}
-      {order.status === "dikirim" && (
+      {order.status === "Sending" && (
         <div className="bg-white p-5 rounded-xl shadow mb-6">
           <h2 className="font-semibold text-lg mb-3">
             Upload Bukti Barang Sampai
@@ -266,7 +266,7 @@ useEffect(() => {
       )}
 
       {/* SUDAH SELESAI */}
-      {order.status === "commplete" && order.bukti_gambar && (
+      {order.status === "Done" && order.bukti_gambar && (
         <div className="bg-white p-5 rounded-xl shadow mb-6">
           <h2 className="font-semibold text-lg mb-3">Bukti Diterima</h2>
           <img

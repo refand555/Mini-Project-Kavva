@@ -1,10 +1,16 @@
 import { useNavigate } from "react-router-dom";
-
+import {ArrowLeft} from "lucide-react";
 export default function Ordersuccess() {
   const navigate = useNavigate();
 
   return (
     <main className="p-6 max-w-xl mx-auto text-center">
+      <button
+              className="absolute left-4 top-20 z-[999] p-2 bg-white/90 rounded-full shadow-sm hover:scale-110 transition"
+              onClick={() => navigate("/")}
+            >
+              <ArrowLeft size={20} className="text-black" />
+            </button>
       <div className="bg-white p-8 rounded-2xl shadow">
         <h1 className="text-3xl font-bold mb-4 tracking-wide">
           Order Berhasil

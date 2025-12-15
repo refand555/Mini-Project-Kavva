@@ -61,8 +61,8 @@ export default function Dashboard() {
     }
 
     const pending = data.filter((o) => o.status === "Waiting For Payment").length;
-    const dipesan = data.filter((o) => o.status === "dikemas").length;
-    const dibayar = data.filter((o) => o.status === "selesai").length;
+    const dipesan = data.filter((o) => o.status === "Packing").length;
+    const dibayar = data.filter((o) => o.status === "Done").length;
 
     setStats({ pending, dipesan, dibayar });
   };

@@ -59,9 +59,9 @@ export default function OrdersPage() {
               <h3 className="text-lg font-bold">Order #{o.id}</h3>
               <span
                 className={`text-sm px-3 py-1 rounded-lg font-semibold ${
-                  o.status === "dikemas"
+                  o.status === "Packing"
                     ? "bg-yellow-100 text-yellow-700"
-                    : o.status === "dikirim"
+                    : o.status === "Sending"
                     ? "bg-blue-100 text-blue-700"
                     : "bg-green-100 text-green-700"
                 }`}
@@ -107,23 +107,23 @@ export default function OrdersPage() {
 
               {/* TOMBOL STATUS */}
               <div className="mt-5 flex gap-3">
-                {o.status === "dikemas" && (
+                {o.status === "Packing" && (
                   <button
-                    onClick={() => updateStatus(o.id, "dikirim")}
+                    onClick={() => updateStatus(o.id, "Sending")}
                     className="bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center gap-2"
                   >
                     <Check size={18} />
-                    Tandai Dikirim
+                    Change to Sending
                   </button>
                 )}
 
-                {o.status === "dikirim" && (
+                {o.status === "Sending" && (
                   <button
-                    onClick={() => updateStatus(o.id, "selesai")}
+                    onClick={() => updateStatus(o.id, "Done")}
                     className="bg-green-600 text-white px-4 py-2 rounded-lg flex items-center gap-2"
                   >
                     <Check size={18} />
-                    Selesaikan Order
+                   Complete the Order
                   </button>
                 )}
               </div>

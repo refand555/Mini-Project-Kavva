@@ -1,10 +1,12 @@
 import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import Puma from "../assets/puma.png";
+import { useNavigate } from "react-router-dom";
 
 export default function HeroPuma() {
   const titleRef = useRef(null);
   const buttonRef = useRef(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
   const tl = gsap.timeline({ ease: "power3.out" });

@@ -1,11 +1,13 @@
 import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import Nike from "../assets/nike.png";
+import { useNavigate } from "react-router-dom";
 
 export default function HeroNike() {
   const titleRef = useRef(null);
   const subRef = useRef(null);
   const buttonRef = useRef(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const tl = gsap.timeline({ ease: "power3.out" });
