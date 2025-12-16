@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import supabase from "../lib/supabaseClient";
 import { useAuth } from "../context/authContext";
-import { useNavigate,  useLocation } from "react-router-dom";
+import { useNavigate,  useLocation, useSearchParams } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import toast from "react-hot-toast";
 
@@ -14,10 +14,22 @@ export default function CheckoutPage() {
   const [cartLoading, setCartLoading] = useState(true);
 
   const [profileLoading, setProfileLoading] = useState(true);
+  const [searchParams] = useSearchParams();
 
   const [nama, setNama] = useState("");
   const [alamat, setAlamat] = useState("");
   const [nohp, setNohp] = useState("");
+
+  // ==========================================
+  // MIDTRANS REDIRECT GUARD (ANTI BALIK CHECKOUT)
+  // ==========================================
+  useEffect(() => {
+    const status = searchParams.get("transaction_status");
+
+    if (status === "settlement" || status === "capture") {
+      navigate("/order-success", { replace: true });
+    }
+  }, [searchParams, navigate]);
 
   // ==========================================
   // FETCH PROFILE USER
@@ -238,15 +250,16 @@ const loadingToast = toast.loading("Memproses pesanan...");
     toast.success("Pesanan dibuat", { id: loadingToast });
 
     // 5) Buka Snap
-    window.snap.pay(data.token, {
-        onSuccess: () => navigate("/order-success"),
-        onPending: () => navigate("/order-success"),
-        onError: () => {
-          toast.error("Pembayaran gagal");
-          navigate("/orders");
-        },
-        onClose: () => navigate("/orders"),
-      });
+    window.snap.pay(token, {
+      onSuccess: () => {
+        window.snap.hide();
+        navigate("/order-success");
+      },
+      onPending: () => {
+        window.snap.hide();
+        navigate("/order-success");
+      },
+    });
       
   } catch (e) {
     toast.error("Gagal memproses checkout", { id: loadingToast });

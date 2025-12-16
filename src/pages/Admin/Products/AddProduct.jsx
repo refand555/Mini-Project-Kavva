@@ -25,6 +25,12 @@ export default function AddProduct() {
   const [brands, setBrands] = useState([]);
   const [categories, setCategories] = useState([]);
   const [grades, setGrades] = useState([]);
+  const hiddenCategories = ["apparel", "performance", "accessories"];
+  const exclusiveCategories = ["shirts", "pants", "shoes"];
+  const visibleCategories = categories.filter(
+    (c) => !hiddenCategories.includes(c.name.toLowerCase())
+  );
+
 
   useEffect(() => {
     loadBrands();
@@ -51,13 +57,37 @@ export default function AddProduct() {
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  const toggleCategory = (id) => {
-    setForm((prev) => ({
-      ...prev,
-      category_ids: prev.category_ids.includes(id)
-        ? prev.category_ids.filter((c) => c !== id)
-        : [...prev.category_ids, id],
-    }));
+  const toggleCategory = (category) => {
+    setForm((prev) => {
+      const isExclusive = exclusiveCategories.includes(
+        category.name.toLowerCase()
+      );
+
+      // kalau category termasuk exclusive (shirts / pants / shoes)
+      if (isExclusive) {
+        // hapus semua category exclusive lain
+        const filtered = prev.category_ids.filter((id) => {
+          const cat = categories.find((c) => c.id === id);
+          return (
+            cat &&
+            !exclusiveCategories.includes(cat.name.toLowerCase())
+          );
+        });
+
+        return {
+          ...prev,
+          category_ids: [...filtered, category.id],
+        };
+      }
+
+      // category biasa (boleh multi)
+      return {
+        ...prev,
+        category_ids: prev.category_ids.includes(category.id)
+          ? prev.category_ids.filter((c) => c !== category.id)
+          : [...prev.category_ids, category.id],
+      };
+    });
   };
 
   const uploadImage = async (file) => {
@@ -83,7 +113,7 @@ const handleSubmit = async (e) => {
   e.preventDefault();
 
   // =========================
-  // VALIDASI WAJIB
+  // VALIDASI FIELD WAJIB
   // =========================
   if (
     !form.nama ||
@@ -99,10 +129,39 @@ const handleSubmit = async (e) => {
     return;
   }
 
+  // =========================
+  // VALIDASI ANGKA
+  // =========================
+  const stock = Number(form.stock);
+  const harga = Number(form.harga);
+
+  if (isNaN(stock) || stock <= 0) {
+    toast.error("Stock harus lebih dari 0");
+    return;
+  }
+
+  if (isNaN(harga) || harga < 0) {
+    toast.error("Harga tidak boleh bernilai minus");
+    return;
+  }
+
+  if (!form.size.trim()) {
+    toast.error("Size wajib diisi");
+    return;
+  }
+
+  // =========================
+  // VALIDASI GAMBAR (WAJIB)
+  // =========================
+  if (!form.gambar1) {
+    toast.error("Gambar produk wajib diupload");
+    return;
+  }
+
   const toastId = toast.loading("Menyimpan produk...");
 
   try {
-    const img1 = form.gambar1 ? await uploadImage(form.gambar1) : null;
+    const img1 = await uploadImage(form.gambar1);
     const img2 = form.gambar2 ? await uploadImage(form.gambar2) : null;
 
     await insertProduct(form, img1, img2, form.brand_id, form.category_ids);
@@ -114,7 +173,6 @@ const handleSubmit = async (e) => {
     console.error("Gagal menambah produk:", err);
   }
 };
-
 
   return (
     <div className="p-10 w-full">
@@ -186,16 +244,16 @@ const handleSubmit = async (e) => {
             </label>
 
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-              {categories.map((c) => (
-                <label key={c.id} className="flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    checked={form.category_ids.includes(c.id)}
-                    onChange={() => toggleCategory(c.id)}
-                  />
-                  {c.name}
-                </label>
-              ))}
+              {visibleCategories.map((c) => (
+              <label key={c.id} className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  checked={form.category_ids.includes(c.id)}
+                  onChange={() => toggleCategory(c)}
+                />
+                {c.name}
+              </label>
+            ))}
             </div>
           </div>
         </div>

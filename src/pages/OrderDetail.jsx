@@ -3,6 +3,8 @@ import { useParams, useNavigate } from "react-router-dom";
 import supabase from "../lib/supabaseClient";
 import { useAuth } from "../context/authContext";
 import { ArrowLeft } from "lucide-react";
+import toast from "react-hot-toast";
+
 
 export default function OrderDetail() {
   const { id } = useParams();
@@ -98,48 +100,50 @@ useEffect(() => {
   // ========================================================
   // UPLOAD BUKTI GAMBAR
   // ========================================================
-  const handleUpload = async (e) => {
+const handleUpload = async (e) => {
   const file = e.target.files[0];
   if (!file) return;
 
   setUploading(true);
+  const toastId = toast.loading("Mengupload bukti...");
 
-  const ext = file.name.split(".").pop();
-  const filename = `bukti_${order.id}_${Date.now()}.${ext}`;
-  const filepath = `uploads/${filename}`;
+  try {
+    const ext = file.name.split(".").pop();
+    const filename = `bukti_${order.id}_${Date.now()}.${ext}`;
+    const filepath = `uploads/${filename}`;
 
-  // UPLOAD KE FOLDER DI DALAM BUCKET
-  const { error: uploadErr } = await supabase.storage
-    .from("order_bukti")
-    .upload(filepath, file, { upsert: true });
+    const { error: uploadErr } = await supabase.storage
+      .from("order_bukti")
+      .upload(filepath, file, { upsert: true });
 
-  if (uploadErr) {
-    alert("Gagal upload gambar");
+    if (uploadErr) throw uploadErr;
+
+    const { data } = supabase.storage
+      .from("order_bukti")
+      .getPublicUrl(filepath);
+
+    const publicUrl = data.publicUrl;
+
+    await supabase
+      .from("orders")
+      .update({
+        bukti_gambar: publicUrl,
+        shipped_at: new Date().toISOString(),
+      })
+      .eq("id", order.id)
+      .is("shipped_at", null);
+
+    await fetchOrder();
+
+    toast.success("Bukti berhasil diupload", { id: toastId });
+  } catch (err) {
+    toast.error("Gagal upload bukti", { id: toastId });
+    console.error("Upload error:", err);
+  } finally {
     setUploading(false);
-    return;
   }
+};
 
-  // DAPATKAN PUBLIC URL
-  const { data } = supabase.storage
-    .from("order_bukti")
-    .getPublicUrl(filepath);
-
-  const publicUrl = data.publicUrl;
-
-  // SIMPAN KE DATABASE
-  await supabase
-    .from("orders")
-    .update({
-      bukti_gambar: publicUrl,
-      shipped_at: new Date().toISOString()
-    })
-    .eq("id", order.id)
-    .is("shipped_at", null);
-
-  await fetchOrder(); 
-
-  setUploading(false);
-  };
 
   return (
     <main className="p-6 max-w-2xl mx-auto">
