@@ -20,15 +20,28 @@ export default function OrderDetail() {
   // FETCH ORDER
   // ========================================================
   const fetchOrder = async () => {
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from("orders")
-      .select("*")
+      .select(`
+        *,
+        shipping:shipping_method_id (
+          id,
+          name,
+          price
+        )
+      `)
       .eq("id", id)
       .eq("user_id", user.id)
       .single();
 
+    if (error) {
+      console.error(error);
+      return;
+    }
+
     if (data) setOrder(data);
   };
+
 
   // ==========================================
   // LOAD MIDTRANS SNAP (HANYA DI HALAMAN INI)
@@ -36,7 +49,7 @@ export default function OrderDetail() {
 useEffect(() => {
   const script = document.createElement("script");
   script.src = "https://app.sandbox.midtrans.com/snap/snap.js";
-  script.setAttribute("data-client-key", "SB-Mid-client-KEY-KAMU");
+  script.setAttribute("data-client-key", "SB-Mid-client-bOqSWbC_LWNr9Icn");
   script.async = true;
 
   document.body.appendChild(script);
@@ -206,6 +219,13 @@ const handleUpload = async (e) => {
         <p>Nama: {order.nama_pemesan}</p>
         <p>Alamat: {order.alamat}</p>
         <p>No HP: {order.no_hp}</p>
+        {order.shipping && (
+          <p>
+            Pengiriman:{" "}
+              {order.shipping.name} — Rp{" "}
+              {order.shipping.price.toLocaleString("id-ID")}
+          </p>
+        )}
         <p className="mt-2 text-gray-600 text-sm">
           Tanggal Order: {new Date(order.created_at).toLocaleDateString("id-ID")}
         </p>

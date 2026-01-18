@@ -245,5 +245,3 @@ export async function searchProductsFiltered(queryText, filters = {}) {
 
   return mapProducts(data || []);
 }
-
- 

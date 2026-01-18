@@ -42,46 +42,75 @@ export default function EditVariant() {
   };
 
   const handleAddVariant = async () => {
-    if (!form.size || !form.grades_id || !form.price || !form.stock) {
-      toast.error("Lengkapi semua field varian");
+  if (!form.size || !form.grades_id || !form.price || !form.stock) {
+    toast.error("Lengkapi semua field varian");
+    return;
+  }
+
+  const price = Number(form.price);
+  const stock = Number(form.stock);
+
+  if (isNaN(price) || price < 0) {
+    toast.error("Harga varian tidak boleh bernilai minus");
+    return;
+  }
+
+  if (isNaN(stock) || stock <= 0) {
+    toast.error("Stok varian harus lebih dari 0");
+    return;
+  }
+
+  const loadingToast = toast.loading("Menambah varian...");
+
+  try {
+    await addVariant(id, {
+      ...form,
+      price,
+      stock,
+    });
+
+    const updated = await getVariants(id);
+    setVariants(updated);
+
+    setForm({ size: "", grades_id: "", price: "", stock: "" });
+    toast.success("Varian berhasil ditambahkan", { id: loadingToast });
+  } catch (err) {
+    toast.error("Gagal menambah varian", { id: loadingToast });
+  }
+};
+
+
+ const handleUpdate = async (variantId, field, value) => {
+  // VALIDASI ANGKA
+  if (field === "price") {
+    const price = Number(value);
+    if (isNaN(price) || price < 0) {
+      toast.error("Harga tidak boleh bernilai minus");
       return;
     }
+  }
 
-    const loadingToast = toast.loading("Menambah varian...");
-
-    try {
-      await addVariant(id, form);
-      const updated = await getVariants(id);
-      setVariants(updated);
-
-      setForm({ size: "", grades_id: "", price: "", stock: "" });
-      toast.success("Varian berhasil ditambahkan", { id: loadingToast });
-    } catch (err) {
-      toast.error("Gagal menambah varian", { id: loadingToast });
+  if (field === "stock") {
+    const stock = Number(value);
+    if (isNaN(stock) || stock <= 0) {
+      toast.error("Stok harus lebih dari 0");
+      return;
     }
-  };
+  }
 
-  const handleUpdate = async (variantId, field, value) => {
-    const loadingToast = toast.loading("Menyimpan perubahan...");
+  if (field === "size" && !value.trim()) {
+    toast.error("Size tidak boleh kosong");
+    return;
+  }
 
-    await updateVariantField(variantId, field, value);
-    const updated = await getVariants(id);
-    setVariants(updated);
+  const loadingToast = toast.loading("Menyimpan perubahan...");
 
-    toast.success("Varian diperbarui", { id: loadingToast });
-  };
+  await updateVariantField(variantId, field, value);
+  const updated = await getVariants(id);
+  setVariants(updated);
 
-  const handleDelete = async (variantId) => {
-    if (!confirm("Hapus varian ini?")) return;
-
-    const loadingToast = toast.loading("Menghapus varian...");
-
-    await deleteVariant(variantId);
-    const updated = await getVariants(id);
-    setVariants(updated);
-
-    toast.success("Varian dihapus", { id: loadingToast });
-  };
+  toast.success("Varian diperbarui", { id: loadingToast });
+};
 
   if (loading) return <p className="p-6">Loading...</p>;
 

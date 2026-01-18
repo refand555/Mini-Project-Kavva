@@ -11,9 +11,16 @@ export default function OrdersPage() {
     setLoading(true);
 
     const { data } = await supabase
-      .from("orders")
-      .select("*")
-      .order("created_at", { ascending: false });
+    .from("orders")
+    .select(`
+      *,
+      shipping:shipping_method_id (
+        id,
+        name,
+        price
+      )
+    `)
+    .order("created_at", { ascending: false });
 
     if (data) setOrders(data);
     setLoading(false);
@@ -96,10 +103,20 @@ export default function OrdersPage() {
                   })}
                 </p>
               )}
+              {o.shipping && (
+                <p>
+                  <strong>Pengiriman:</strong>{" "}
+                  {o.shipping.name} — Rp{" "}
+                  {o.shipping.price.toLocaleString("id-ID")}
+                </p>
+              )}
               </div>
 
               {/* ITEM LIST */}
-              <OrderItemsList orderId={o.id} />
+              <OrderItemsList
+                orderId={o.id}
+                totalHarga={o.total_harga}
+              />
 
               {/* BUKTI */}
               {o.bukti_gambar && (
@@ -146,7 +163,7 @@ export default function OrdersPage() {
 /* ================================================================
    COMPONENT: ITEM LIST
 ================================================================ */
-function OrderItemsList({ orderId }) {
+function OrderItemsList({ orderId, totalHarga }) {
   const [items, setItems] = useState([]);
 
   useEffect(() => {
@@ -169,11 +186,6 @@ function OrderItemsList({ orderId }) {
 
     fetchItems();
   }, [orderId]);
-
-  const totalOrder = items.reduce(
-    (acc, p) => acc + p.qty * p.harga,
-    0
-  );
 
   return (
     <div className="bg-gray-50 p-4 rounded-lg border mt-4">
@@ -219,7 +231,7 @@ function OrderItemsList({ orderId }) {
 
       {/* TOTAL ORDER */}
       <p className="font-bold text-lg mt-4">
-        Total Order: Rp {totalOrder.toLocaleString("id-ID")}
+        Total Order: Rp {Number(totalHarga).toLocaleString("id-ID")}
       </p>
     </div>
   );

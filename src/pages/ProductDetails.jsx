@@ -10,6 +10,8 @@ export default function ProductDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
+  const videoRefs = useRef([]);
+
 
   const [product, setProduct] = useState(null);
   const [images, setImages] = useState([]);
@@ -91,6 +93,21 @@ export default function ProductDetails() {
     }
     fetchData();
   }, [id]);
+
+
+  useEffect(() => {
+  videoRefs.current.forEach((video, index) => {
+    if (!video) return;
+
+    if (index === activeIndex) {
+      video.play().catch(() => {});
+    } else {
+      video.pause();
+      video.currentTime = 0;
+    }
+  });
+}, [activeIndex]);
+
 
   if (loading) return <div>Loading...</div>;
   if (!product) return <div>Produk tidak ditemukan</div>;
@@ -191,7 +208,7 @@ export default function ProductDetails() {
       </div>
 
       {/* GALLERY */}
-      <section className="w-full border-b border-gray-200 pb-10">
+      <section className="w-full border-b border-gray-200 pb-10 pt-24">
         <div
           ref={sliderRef}
           onScroll={() => {
@@ -202,15 +219,33 @@ export default function ProductDetails() {
           className="w-full max-w-4xl mx-auto overflow-x-auto snap-x snap-mandatory flex scroll-smooth"
           style={{ scrollbarWidth: "none" }}
         >
-          {images.map((img) => (
-            <div key={img.id} className="min-w-full flex justify-center snap-start px-6">
-              <img
-                src={img.image_url}
-                alt={product.name}
-                className="object-contain w-full max-h-[430px]"
-              />
-            </div>
-          ))}
+          {images.map((item, index) => {
+  const isVideo = item.image_url?.endsWith(".mp4");
+
+  return (
+    <div
+      key={item.id}
+      className="min-w-full flex justify-center snap-start px-6"
+    >
+      {isVideo ? (
+        <video
+          ref={(el) => (videoRefs.current[index] = el)}
+          src={item.image_url}
+          muted
+          controls
+          className="w-full max-h-[430px] rounded"
+        />
+      ) : (
+        <img
+          src={item.image_url}
+          alt={product.name}
+          className="object-contain w-full max-h-[430px]"
+        />
+      )}
+    </div>
+  );
+})}
+
         </div>
 
         {/* DOTS */}

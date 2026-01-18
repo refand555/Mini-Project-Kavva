@@ -58,7 +58,7 @@ export default function Header({ isOnHero }) {
   };
 
   // =====================
-  // LIVE SEARCH (PAKAI FUNGSI LAMA)
+  // LIVE SEARCH 
   // =====================
   useEffect(() => {
     if (!searchQuery.trim()) {

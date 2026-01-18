@@ -10,7 +10,7 @@ const Footer = () => {
             Kavva
           </h2>
           <p className="text-sm text-white">
-            Temukan produk terbaik dengan harga terjangkau hanya di Kavva Store.
+            Temukan produk terbaik dengan harga terjangkau hanya di Kavva.
             Belanja aman, cepat, dan terpercaya!
           </p>
         </div>
@@ -20,13 +20,13 @@ const Footer = () => {
           <h3 className="text-lg font-semibold text-white mb-3">Sitemap</h3>
           <ul className="space-y-1.5 text-sm">
             <li>
-              <a href="/" className="text-white hover:text-white">Aksesoris</a>
+              <a href="/category/apparel/shirts" className="text-white hover:text-white">Shirt</a>
             </li>
             <li>
-              <a href="/shop" className="text-white hover:text-white">Shop</a>
+              <a href="/category/apparel/pants" className="text-white hover:text-white">Pants</a>
             </li>
             <li>
-              <a href="/about" className="text-white hover:text-white">About</a>
+              <a href="//category/apparel/shoes" className="text-white hover:text-white">Shoes</a>
             </li>
             <li>
               <a 

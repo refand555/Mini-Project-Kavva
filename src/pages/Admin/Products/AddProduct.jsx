@@ -20,6 +20,9 @@ export default function AddProduct() {
     harga: "",
     gambar1: null,
     gambar2: null,
+    gambar3: null,
+    gambar4: null,
+    video: null,
   });
 
   const [brands, setBrands] = useState([]);
@@ -109,8 +112,28 @@ export default function AddProduct() {
     return data.publicUrl;
   };
 
+  const uploadMedia = async (file) => {
+  if (!file) return null;
+
+  const cleanName = file.name.replace(/\s+/g, "-").toLowerCase();
+  const filePath = `products/${Date.now()}-${cleanName}`;
+
+  const { error } = await supabase.storage
+    .from("product_image")
+    .upload(filePath, file);
+
+  if (error) throw error;
+
+  const { data } = supabase.storage
+    .from("product_image")
+    .getPublicUrl(filePath);
+
+  return data.publicUrl;
+};
+
 const handleSubmit = async (e) => {
   e.preventDefault();
+  const MAX_VIDEO_SIZE = 5 * 1024 * 1024; // 5MB
 
   // =========================
   // VALIDASI FIELD WAJIB
@@ -161,11 +184,59 @@ const handleSubmit = async (e) => {
   const toastId = toast.loading("Menyimpan produk...");
 
   try {
-    const img1 = await uploadImage(form.gambar1);
-    const img2 = form.gambar2 ? await uploadImage(form.gambar2) : null;
+    try {
+  const mediaFiles = [
+    form.gambar1,
+    form.gambar2,
+    form.gambar3,
+    form.gambar4,
+    form.video,
+  ];
 
-    await insertProduct(form, img1, img2, form.brand_id, form.category_ids);
+  const uploadedUrls = [];
 
+ for (const file of mediaFiles) {
+  if (!file) continue;
+
+  // =========================
+  // LIMIT SIZE VIDEO 5MB
+  // =========================
+  if (file.type.startsWith("video/")) {
+    if (file.size > MAX_VIDEO_SIZE) {
+      toast.error("Ukuran video maksimal 5MB");
+      return; // hentikan submit
+    }
+  }
+
+  const url = await uploadMedia(file);
+  uploadedUrls.push(url);
+}
+
+
+  // fungsi lama tetap dipakai
+  const productId = await insertProduct(
+    form,
+    uploadedUrls[0],          // gambar1
+    uploadedUrls[1] || null,  // gambar2
+    form.brand_id,
+    form.category_ids
+  );
+
+  // tambahan kecil (TANPA ganggu struktur lama)
+  const mediaRows = uploadedUrls.map((url, index) => ({
+    product_id: productId,
+    image_url: url,
+    order: index + 1,
+  }));
+
+  await supabase.from("product_image").insert(mediaRows);
+
+  toast.success("Produk berhasil ditambahkan", { id: toastId });
+  navigate("/admin/products");
+} catch (err) {
+  toast.error(err.message || "Gagal menambah produk", { id: toastId });
+}
+    
     toast.success("Produk berhasil ditambahkan", { id: toastId });
     navigate("/admin/products");
   } catch (err) {
@@ -221,10 +292,11 @@ const handleSubmit = async (e) => {
           />
 
           <FormInput label="Harga" name="harga" form={form} handle={handleChange} />
-
           <FormInput label="Gambar 1" name="gambar1" file form={form} handle={handleChange} />
-
           <FormInput label="Gambar 2" name="gambar2" file form={form} handle={handleChange} />
+          <FormInput label="Gambar 3" name="gambar3" file form={form} handle={handleChange} />
+          <FormInput label="Gambar 4" name="gambar4" file form={form} handle={handleChange} />
+          <FormInput label="Video" name="video" file form={form} handle={handleChange} />
 
           {/* DESKRIPSI */}
           <div>
@@ -277,7 +349,7 @@ function FormInput({ label, name, type = "text", form, handle, file = false }) {
       {file ? (
         <input
           type="file"
-          accept="image/*"
+          accept="image/*,video/mp4"
           onChange={(e) => handle(name, e.target.files[0])}
           className="w-full bg-gray-200 border border-gray-300 rounded-lg p-3"
         />

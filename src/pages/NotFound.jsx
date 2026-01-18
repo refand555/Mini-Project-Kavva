@@ -19,18 +19,6 @@ export default function NotFound() {
            "Tautan ini telah usang dan penuh debu, sama seperti setelan di samping. Ini adalah tanda! Saatnya memperbarui keranjang belanja Anda dengan sesuatu yang 100% on-trend."
           </p>
 
-          {/* Search bar */}
-          <div className="flex items-center max-w-md mx-auto md:mx-0 border border-gray-300 rounded-2xl overflow-hidden focus-within:ring-2 focus-within:ring-gray-900 transition">
-            <input
-              type="text"
-              placeholder="Cari produk atau halaman..."
-              className="flex-1 px-4 py-2 text-sm outline-none bg-transparent"
-            />
-            <button className="px-3 text-white">
-              <Search size={20} strokeWidth={1.5} />
-            </button>
-          </div>
-
           {/* Tombol kembali */}
           <a
             href="/"

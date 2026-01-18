@@ -52,7 +52,8 @@ export async function getProductById(id) {
       product_image (
         order,
         image_url
-      ),
+      )
+      .order("order", { ascending: true })
       stock_variants (
         id,
         size,
@@ -98,7 +99,11 @@ export async function insertProduct(form, img1, img2, brandId, categoryIds) {
   // 2. Insert kedua gambar
   await supabase.from("product_image").insert([
     { product_id: productId, image_url: img1, order: 1 },
-    { product_id: productId, image_url: img2, order: 2 }
+    { product_id: productId, image_url: img2, order: 2 },
+    { product_id: productId, image_url: img3, order: 3 },
+    { product_id: productId, image_url: img4, order: 4 },
+    { product_id: productId, image_url: img5, order: 5 }
+
   ]);
 
   // 3. Insert kategori

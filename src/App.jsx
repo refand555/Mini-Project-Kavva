@@ -38,6 +38,7 @@ import Ordersuccess from "./pages/Ordersuccess";
 import UserOrders from "./pages/UserOrders";
 import OrderDetail from "./pages/OrderDetail";
 import { Toaster } from "react-hot-toast";
+import NotFound from "./pages/NotFound";
 
 export default function App() {
   const location = useLocation();
@@ -153,7 +154,7 @@ export default function App() {
         </Route>
 
         {/* WRONG ROUTES */}
-        <Route path="*" element={<Navigate to="/" replace />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
 
       {!hideLayout && <Footer />}
